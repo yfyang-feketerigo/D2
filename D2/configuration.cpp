@@ -15,7 +15,7 @@ namespace Configuration
 	using std::endl;
 	using std::cerr;
 	using std::string;
-	Configuration::Configuration(std::string config_file, BoxType _boxtype, PairStyle _pairstyle)
+	Configuration::Configuration(std::string config_file, BoxType _boxtype, PairStyle _pairstyle, bool _is_sorted)
 	{
 #ifdef LOG_ON_SCREEN
 		clog << "#LAMMPS data file reader..." << '\n';
@@ -28,6 +28,7 @@ namespace Configuration
 		ifstream infile;
 		HEAD_INFO_LINE = 0;
 		infile.open(config_file);
+		flag_particle_sorted = _is_sorted;
 		if (infile.is_open())
 		{
 #ifdef LOG_ON_SCREEN
@@ -250,6 +251,7 @@ namespace Configuration
 		}
 		particle_num++;
 		vec_particle.push_back(new_pa);
+		flag_particle_sorted = false;
 		return vec_particle.size();
 	}
 

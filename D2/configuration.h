@@ -4,6 +4,8 @@
 // 20211123 add members: lx ly lz, automaticlly computed when obj constructed
 //			add func: get_lx(), get_ly(), get_lz()
 // 20211129 规范namespace
+// 20211206 add: 对id连续的粒子按id排序，并且利用排序后粒子组快速检索 const Particle& get_particle_sorted(size_t id)，排序信息储存在std::vector<const Particle*> pvec_particle_sorted中
+//               注意该方法要求粒子ID连续，且从0开始。				
 /*
 * 用于读取KA模型（纯LJ粒子）体系LAMMPS data文件
 * 同时允许输出单粒子的参量，使用para_to_dump方法
@@ -20,6 +22,7 @@
 #include <initializer_list>
 #include <algorithm>
 //#define LOG_ON_SCREEN
+#define SAFE_GET_PARTICLE_SORTED
 namespace Configuration
 {
 
@@ -58,6 +61,8 @@ namespace Configuration
 		std::vector<Particle> vec_particle; //particles container
 		std::string filename;
 
+		bool flag_particle_sorted = false;
+		std::vector<const Particle*> pvec_particle_sorted;
 	public:
 		enum class BoxType
 		{
@@ -70,7 +75,7 @@ namespace Configuration
 			pair,
 			none
 		};
-		Configuration(std::string config_file, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single);				   //
+		Configuration(std::string config_file, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single, bool _is_sorted = false);
 		Configuration() {};
 		inline size_t GET_LINE_MAX() { return LINE_SKIP_MAX; }
 		inline size_t GET_HEAD_INFO_LINE() { return HEAD_INFO_LINE; }
@@ -172,16 +177,56 @@ namespace Configuration
 			std::cerr << "particle " << _id << " not found";
 			throw("particle " + std::to_string(_id) + " not found");
 		}
+
+		bool get_flag_sorted() const
+		{
+			return flag_particle_sorted;
+		}
+
+		void sort_particle()
+		{
+			auto comp_id = [](const Particle* a, const Particle* b) {return a->id <= b->id; };
+			pvec_particle_sorted.resize(vec_particle.size());
+			for (size_t i = 0; i < pvec_particle_sorted.size(); i++)
+			{
+				pvec_particle_sorted[i] = &vec_particle[i];
+			}
+			std::sort(pvec_particle_sorted.begin(), pvec_particle_sorted.end(), comp_id);
+			flag_particle_sorted = true;
+		}
+
+		const std::vector<const Particle*>& get_pvec_particle_sorted() const
+		{
+#ifdef SAFE_GET_PARTICLE_SORTED
+			if (!flag_particle_sorted)
+				throw std::exception("particle not sorted when using get_particle_sorted()!!!");
+#endif // SAFE_GET_PARTICLE_SORTED
+			return pvec_particle_sorted;
+		}
+
+		const Particle& get_particle_sorted(size_t id) const // CAUTION! this method need all particle id be consecutive and start with 0;
+		{
+			//std::cout << "using sorted!" << '\n';
+#ifdef SAFE_GET_PARTICLE_SORTED
+			if (!flag_particle_sorted)
+				throw std::exception("particle not sorted when using get_particle_sorted(size_t id)!!!");
+			if (id > get_particle().size() || id <= 0)
+				throw std::exception(("Searching particle id " + std::to_string(id) + " illegal\n").c_str());
+#endif // SAFE_GET_PARTICLE_SORTED
+			return *(pvec_particle_sorted[id - 1]);
+		}
+
 		inline const std::vector<Particle>& get_particle() const//return vector of all particles
 		{
 			return vec_particle;
 		}
 
-		size_t __add_particle(const Particle& new_pa);
-		inline void __clear_vec_particle()
+		virtual size_t __add_particle(const Particle& new_pa);
+		virtual inline void __clear_vec_particle()
 		{
 			vec_particle.clear();
 			particle_num = 0;
+			flag_particle_sorted = false;
 		}
 		void to_data(std::string fname, BoxType _boxtype = BoxType::tilt);
 

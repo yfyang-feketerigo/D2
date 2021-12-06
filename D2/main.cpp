@@ -7,7 +7,7 @@
 #include <vector>
 #include <eigen3/Eigen/Dense>
 #include <boost/program_options.hpp>
-//#include <set>
+#include <boost/timer/timer.hpp>
 
 
 void mkdir(std::string path)
@@ -21,6 +21,7 @@ void mkdir(std::string path)
 
 int main(int ac, char* av[])
 {
+	boost::timer::cpu_timer timer;
 	namespace po = boost::program_options;
 	using namespace std;
 	try
@@ -30,10 +31,10 @@ int main(int ac, char* av[])
 			("help", "produce help message");
 
 
-		double r_cut;
+		double rcut;
 		po::options_description rcut_options("rcut");
 		rcut_options.add_options()
-			("rcut,r", po::value<double>(&r_cut), "cutoff distance");
+			("rcut,r", po::value<double>(&rcut), "cutoff distance");
 
 		string ifname_t;
 		string ifname_t_;
@@ -62,37 +63,37 @@ int main(int ac, char* av[])
 			cout << allowed_options << "\n";
 			return 1;
 		}
-		cout << "rcut: " << r_cut << '\n';
+
+		if (vm.count("rcut"))
+			cout << "rcut: " << rcut << '\n';
+		else
+			throw exception("rcut was not set!");
+
 		if (vm.count("ifname_t"))
-		{
 			cout << "input file name at time t: " << vm["ifname_t"].as<string>() << '\n';
-		}
 		else
-		{
 			throw exception("inpute file name at time t was not set.\n --help to show help");
-		}
+
 		if (vm.count("ifname_t-dt"))
-		{
 			cout << "input file name at time t-dt: " << vm["ifname_t-dt"].as<string>() << '\n';
-		}
 		else
-		{
 			throw exception("input file name at time t-dt was not set.\n --help to show help");
-		}
+
 		cout << "input file path: " << vm["ifpath"].as<string>() << '\n';
 		cout << "output file name: " << vm["ofname"].as<string>() << '\n';
 		cout << "output file path: " << vm["ofpath"].as<string>() << '\n';
-
-
+		cout << '\n';
 		typedef Configuration::Configuration::BoxType BoxType;
 		typedef Configuration::Configuration::PairStyle PairStyle;
 
 		string fname_t = ifpath + '/' + ifname_t;
 		string fname_t_ = ifpath + '/' + ifname_t_;
 
-		D2::Configuration_neighbours config_t(fname_t, r_cut, BoxType::tilt, PairStyle::none);
-		D2::Configuration_neighbours config_t_(fname_t_, r_cut, BoxType::tilt, PairStyle::none);
+		D2::Configuration_neighbours config_t(fname_t, rcut, BoxType::tilt, PairStyle::none);
+		D2::Configuration_neighbours config_t_(fname_t_, rcut, BoxType::tilt, PairStyle::none);
 
+		config_t.sort_particle();
+		config_t_.sort_particle();
 		auto& vec_neighbours = config_t.get_neighbours();
 		const auto& vec_pa_t = config_t.get_particle();
 
@@ -102,13 +103,14 @@ int main(int ac, char* av[])
 		{
 			vecd_D2[i] = 0.;
 			const Particle& pa = config_t.get_particle()[i];
-			D2::D2 d2_pa(&pa, r_cut, &config_t, &config_t_);
+			D2::D2 d2_pa(&pa, rcut, &config_t, &config_t_);
 			vecd_D2[i] = d2_pa.get_D2();
 		}
 		mkdir(ofpath);
 		string offname = ofpath + '/' + ofname;
 		config_t.para_to_dump(offname, { "D2" }, { vecd_D2 });
-
+		cout << "done! time info: " << timer.format();
+		cout << '\n';
 	}
 	catch (const std::exception& e)
 	{

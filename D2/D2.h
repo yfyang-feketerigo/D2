@@ -7,22 +7,33 @@
 #include <map>
 #include <initializer_list>
 #include <eigen3/Eigen/Dense>
+
+#define NO_STORE_NEIGHBOUR_RIJ
 namespace D2
 {
 	static constexpr size_t DIMENSION = 3; // system dimension, in my case is always 3, other cases NOT tested
+	static constexpr size_t NEIGHBOUR_SIZE_REDUNDANCY = 5;//
 	typedef Eigen::Matrix<double, DIMENSION, 1>  VectorDd; // define DIMENSION-d col vector(for position, distance and other concepts in math or physics, NOT a container like std::vector)
 	typedef Eigen::Matrix<double, DIMENSION, DIMENSION> MatrixDd; // define DIMENSION * DIMENSION shape matrix
 	static MatrixDd DELTAij = MatrixDd::Identity();
 
+	struct Neighbour
+	{
+		const Particle* p_neighbour;
+#ifndef NO_STORE_NEIGHBOUR_RIJ //store rij information if necessary
+		VectorDd rij;
+		double drij;
+#endif // !NO_STORE_NEIGHBOUR_RIJ
+	};
+
 	struct Neighbours // contains a pointer to center particle and a std::vector container of pointers which points to neighbour-particles of center particle
 	{
 		const Particle* p_center_pa = nullptr;
-		std::vector<const Particle*> pvec_neighbours;
-
+		std::vector<Neighbour> vec_neighbours;
 		~Neighbours()
 		{
 			p_center_pa = nullptr;
-			pvec_neighbours.clear();
+			vec_neighbours.clear();
 		}
 	};
 
@@ -46,13 +57,13 @@ namespace D2
 		Configuration_neighbours(std::string config_file, double _r_cut, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single)
 			:Configuration(config_file, _boxtype, _pairstyle)
 			/*
-			* r_cut is the cutoff distance of pair-interaction
+			* rcut is the cutoff distance of pair-interaction
 			* construction
 			* update neighbour information
 			* setting transfer matrixs
 			*/
 		{
-			r_cut = _r_cut;
+			rcut = _r_cut;
 			m_base_cartesian_to_box = MatrixDd::Zero();
 
 			m_base_cartesian_to_box(0, 0) = get_lx();
@@ -76,14 +87,14 @@ namespace D2
 		VectorDd to_box_coordination(const Particle& pa) const; // transfer coordinations of given particle from cartesian to box-base, return a VectorDd
 		VectorDd get_PBC_rij(const Particle& pai, const Particle& paj) const; // computing distance between two particles, under PBC
 
-		double get_rcut() { return r_cut; } // return rcut
+		double get_rcut() { return rcut; } // return rcut
 
 		const MatrixDd& get_m_base_cartesian_to_box() const { return m_base_cartesian_to_box; }
 		const MatrixDd& get_m_base_box_to_cartesian() const { return m_base_box_to_cartesian; }
 		const MatrixDd& get_m_vector_cartesian_to_box() const { return m_vector_cartesian_to_box; }
 		const MatrixDd& get_m_vector_box_to_cartesian() const { return m_vector_box_to_cartesian; }
 	private:
-		double r_cut = 0;
+		double rcut = 0;
 		bool flag_neighbous_update = false;
 		std::vector<Neighbours> vec_neighbours;
 		MatrixDd m_base_cartesian_to_box; // matrix, transfer base vectors from cartesian to box-base

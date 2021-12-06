@@ -3,12 +3,16 @@ namespace D2
 {
 	void Configuration_neighbours::_update_neighbours()
 	{
+		double rho = get_particle_num() / get_lx() / get_ly() / get_lz();
+		size_t reserve_neighbour_size = size_t(rho * rcut * rcut * rcut) + NEIGHBOUR_SIZE_REDUNDANCY;
+
 		const auto& vec_pa = this->get_particle();
 		vec_neighbours.resize(vec_pa.size());
 		for (size_t i = 0; i < vec_pa.size(); i++)
 		{
 			vec_neighbours[i].p_center_pa = &vec_pa[i];
-			vec_neighbours[i].pvec_neighbours.clear();
+			vec_neighbours[i].vec_neighbours.reserve(reserve_neighbour_size);
+			vec_neighbours[i].vec_neighbours.clear();
 		}
 		for (size_t i = 0; i < vec_pa.size(); i++)
 		{
@@ -20,15 +24,22 @@ namespace D2
 				bool flag_compute_drij = true;
 				for (size_t k = 0; k < DIMENSION; k++) // pre-check distance
 				{
-					flag_compute_drij = (flag_compute_drij && (abs(rij_PBC[k]) < r_cut));
+					flag_compute_drij = (flag_compute_drij && (abs(rij_PBC[k]) < rcut));
 				}
 				if (flag_compute_drij)
 				{
 					double drij = sqrt(rij_PBC.dot(rij_PBC));
-					if (drij < r_cut)
+					if (drij < rcut)
 					{
-						vec_neighbours[i].pvec_neighbours.push_back(&paj);
-						vec_neighbours[j].pvec_neighbours.push_back(&pai);
+#ifndef NO_STORE_NEIGHBOUR_RIJ // store rij information
+						Neighbour j_in_i{ &paj,rij_PBC,drij };
+						Neighbour i_in_j{ &pai,-rij_PBC,drij };
+#else // NOT store rij information
+						Neighbour j_in_i{ &paj };
+						Neighbour i_in_j{ &pai };
+#endif // !NO_STORE_NEIGHBOUR_RIJ
+						vec_neighbours[i].vec_neighbours.push_back(j_in_i);
+						vec_neighbours[j].vec_neighbours.push_back(i_in_j);
 					}
 				}
 			}
@@ -78,17 +89,31 @@ namespace D2
 
 	void D2::compute_Xij()
 	{
+		const Particle& (Configuration::Configuration:: * get_pa)(size_t) const;
+		if (config_t_->get_flag_sorted() && config_t->get_flag_sorted())
+		{
+			get_pa = &Configuration::Configuration::get_particle_sorted;
+		}
+		else
+		{
+			get_pa = &Configuration::Configuration::get_particle;
+		}
+
 		Xij.setZero();
 		const Particle& pa_0_t = *p_pa;
 		auto& pa_0_t_neighbours = config_t->get_neighbours(pa_0_t);
-		const Particle& pa_0_t_ = config_t_->get_particle(pa_0_t.id);
-		for (size_t n = 0; n < pa_0_t_neighbours.pvec_neighbours.size(); n++)
+		const Particle& pa_0_t_ = (config_t_->*get_pa)(pa_0_t.id);
+		for (size_t n = 0; n < pa_0_t_neighbours.vec_neighbours.size(); n++)
 		{
-			const Particle& pa_n_t = *pa_0_t_neighbours.pvec_neighbours[n];
-			const Particle& pa_n_t_ = config_t_->get_particle(pa_n_t.id);
-			VectorDd rn0_t = config_t->get_PBC_rij(pa_n_t, pa_0_t);
-			VectorDd rn0_t_ = config_t_->get_PBC_rij(pa_n_t_, pa_0_t_);
-			Xij += rn0_t * rn0_t_.transpose();
+			const Particle& pa_n_t = *pa_0_t_neighbours.vec_neighbours[n].p_neighbour;
+			const Particle& pa_n_t_ = (config_t_->*get_pa)(pa_n_t.id);
+#ifndef NO_STORE_NEIGHBOUR_RIJ // if rij is pre-stored, use it
+			const VectorDd& r0n_t = pa_0_t_neighbours.vec_neighbours[n].rij;
+#else // if rij is NOT pre-stored, calculate it 
+			const VectorDd r0n_t = config_t->get_PBC_rij(pa_0_t, pa_n_t);
+#endif // !NO_STORE_NEIGHBOUR_RIJ
+			const VectorDd r0n_t_ = config_t_->get_PBC_rij(pa_0_t_, pa_n_t_);
+			Xij += r0n_t * r0n_t_.transpose();
 		}
 		flag_computed_Xij = true;
 		return;
@@ -96,15 +121,25 @@ namespace D2
 
 	void D2::compute_Yij()
 	{
+		const Particle& (Configuration::Configuration:: * get_pa)(size_t) const;
+		if (config_t_->get_flag_sorted() && config_t->get_flag_sorted())
+		{
+			get_pa = &Configuration::Configuration::get_particle_sorted;
+		}
+		else
+		{
+			get_pa = &Configuration::Configuration::get_particle;
+		}
 		Yij.setZero();
 		const Particle& pa_0_t = *p_pa;
 		auto& pa_0_t_neighbours = config_t->get_neighbours(pa_0_t);
-		const Particle& pa_0_t_ = config_t_->get_particle(pa_0_t.id);
-		for (size_t n = 0; n < pa_0_t_neighbours.pvec_neighbours.size(); n++)
+
+		const Particle& pa_0_t_ = (config_t_->*get_pa)(pa_0_t.id);
+		for (size_t n = 0; n < pa_0_t_neighbours.vec_neighbours.size(); n++)
 		{
-			const Particle& pa_n_t = *pa_0_t_neighbours.pvec_neighbours[n];
-			const Particle& pa_n_t_ = config_t_->get_particle(pa_n_t.id);
-			VectorDd rn0_t_ = config_t_->get_PBC_rij(pa_n_t_, pa_0_t_);
+			const Particle& pa_n_t = *pa_0_t_neighbours.vec_neighbours[n].p_neighbour;
+			const Particle& pa_n_t_ = (config_t_->*get_pa)(pa_n_t.id);
+			const VectorDd rn0_t_ = config_t_->get_PBC_rij(pa_n_t_, pa_0_t_);
 			Yij += rn0_t_ * rn0_t_.transpose();
 		}
 		flag_computed_Yij = true;
@@ -126,18 +161,32 @@ namespace D2
 
 	void D2::compute_D2()
 	{
+		const Particle& (Configuration::Configuration:: * get_pa)(size_t) const;
+		if (config_t_->get_flag_sorted() && config_t->get_flag_sorted())
+		{
+			get_pa = &Configuration::Configuration::get_particle_sorted;
+		}
+		else
+		{
+			get_pa = &Configuration::Configuration::get_particle;
+		}
+
 		compute_epsilonij();
 		const Particle& pa_0_t = *p_pa;
-		const Particle& pa_0_t_ = config_t_->get_particle(pa_0_t.id);
-		const auto& pvec_ngbrs_0_t = config_t->get_neighbours(pa_0_t).pvec_neighbours;
+		const Particle& pa_0_t_ = (config_t_->*get_pa)(pa_0_t.id);
+		const auto& pvec_ngbrs_0_t = config_t->get_neighbours(pa_0_t).vec_neighbours;
 		d2 = 0;
 		for (size_t n = 0; n < pvec_ngbrs_0_t.size(); n++)
 		{
-			const Particle& pa_n_t = *pvec_ngbrs_0_t[n];
-			const Particle& pa_n_t_ = config_t_->get_particle(pa_n_t.id);
-			VectorDd rn0_t = config_t->get_PBC_rij(pa_n_t, pa_0_t);
-			VectorDd rn0_t_ = config_t_->get_PBC_rij(pa_n_t_, pa_0_t_);
-			VectorDd Dn_vector = rn0_t - (DELTAij + epsilonij) * rn0_t_;
+			const Particle& pa_n_t = *pvec_ngbrs_0_t[n].p_neighbour;
+			const Particle& pa_n_t_ = (config_t_->*get_pa)(pa_n_t.id);
+#ifndef NO_STORE_NEIGHBOUR_RIJ // if rij is pre-stored, use it
+			const VectorDd& r0n_t = pvec_ngbrs_0_t[n].rij;
+#else // if rij is NOT pre-stored, calculate it
+			const VectorDd r0n_t = config_t->get_PBC_rij(pa_0_t, pa_n_t);
+#endif // !NO_STORE_NEIGHBOUR_RIJ
+			const VectorDd r0n_t_ = config_t_->get_PBC_rij(pa_0_t_, pa_n_t_);
+			VectorDd Dn_vector = r0n_t - (DELTAij + epsilonij) * r0n_t_;
 			double Dn = Dn_vector.dot(Dn_vector);
 			d2 += Dn;
 		}
