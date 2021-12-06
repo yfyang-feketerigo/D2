@@ -321,7 +321,7 @@ namespace Configuration
 		ofile.open(full_opath);
 		if (!ofile.is_open())
 		{
-			cerr << full_opath << " open failed" << endl;
+			//cerr << full_opath << " open failed" << endl;
 			throw std::exception((full_opath + " open failed").c_str());
 		}
 

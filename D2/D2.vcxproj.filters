@@ -55,5 +55,8 @@
     <None Include="test_datafile\data.restart.DPD.shear.wi100.241560">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="test_datafile\affine0.2.data.restart.DPD.shear.wi100.5280">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -192,8 +192,8 @@ namespace Configuration
 			ofile.open(fname);
 			if (!ofile.is_open())
 			{
-				std::cerr << fname << " open failed" << std::endl;
-				throw (fname + " open failed");
+				//std::cerr << fname << " open failed" << std::endl;
+				throw std::exception((fname + " open failed").c_str());
 			}
 			for (size_t i = 0; i < comments.size(); i++)
 			{

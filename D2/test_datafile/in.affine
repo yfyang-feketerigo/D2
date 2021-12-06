@@ -1,0 +1,5 @@
+variable fname string "data.restart.DPD.shear.wi100.5280"
+variable strain equal 0.2
+read_data ${fname}
+change_box all xy delta ${strain} remap
+write_data affine${strain}.${fname}

@@ -6,68 +6,116 @@
 #include <fstream>
 #include <vector>
 #include <eigen3/Eigen/Dense>
-#include <set>
-int main()
+#include <boost/program_options.hpp>
+//#include <set>
+
+
+void mkdir(std::string path)
 {
-	using namespace std;
-	typedef Configuration::Configuration::BoxType BoxType;
-	typedef Configuration::Configuration::PairStyle PairStyle;
-
-	string fname_t = "test_datafile/data.restart.DPD.shear.wi100.6600";
-	string fname_t_ = "test_datafile/data.restart.DPD.shear.wi100.5280";
-	double r_cut = 2.5;
-
-	D2::Configuration_neighbours config_t(fname_t, r_cut, BoxType::tilt, PairStyle::none);
-	D2::Configuration_neighbours config_t_(fname_t_, r_cut, BoxType::tilt, PairStyle::none);
-
-	auto& vec_neighbours = config_t.get_neighbours();
-	const auto& vec_pa_t = config_t.get_particle();
-	//size_t total_neighbours = 0;
-	//std::cout << vec_neighbours.size() << "\n";
-
-	//size_t index;
-	//std::cout << "enter a number<4320: \n";
-	//std::cin >> index;
-	//size_t i_size = vec_neighbours[index].pvec_neighbours.size();
-	//auto& pvec_nbr = vec_neighbours[index].pvec_neighbours;
-	//std::cout << "particle(i) id: " << vec_neighbours[index].p_center_pa->id << '\n';
-	//std::cout << "neighbour list size: " << i_size << "\n";
-	//cout << D2::DELTAij;
-	vector<double> vecd_D2;
-	vecd_D2.resize(vec_pa_t.size());
-	for (size_t i = 0; i < vec_pa_t.size(); i++)
+	boost::filesystem::path bpath(path);
+	if (!boost::filesystem::exists(path))
 	{
-		const Particle& pa = config_t.get_particle()[i];
-		D2::D2 d2_pa(&pa, r_cut, &config_t, &config_t_);
-		vecd_D2[i] = d2_pa.get_D2();
+		boost::filesystem::create_directories(bpath);
 	}
-	//cout << vecd_D2[0].get
-	config_t.para_to_dump("D2_test", { "D2" }, { vecd_D2 });
-	//D2::d2_pa()
-		/*
-		std::cout << "particle j id: " << pvec_nbr[0]->id << '\n';
-		const Particle& pai = *vec_neighbours[index].p_center_pa;
-		const Particle& paj = config_t.get_particle(pvec_nbr[0]->id);
-		auto rij = config_t.get_PBC_rij(pai, paj);
-		double drij = sqrt(rij.dot(rij));
-		cout << "rij:" << '\n' << rij << '\n';
-		cout << "drij: " << drij << '\n';
-		cout << "i " << pai.id << ": " << pai.rx << ' ' << pai.ry << ' ' << pai.rz << '\n';
-		cout << "j " << paj.id << ": " << paj.rx << ' ' << paj.ry << ' ' << paj.rz << '\n';
-		auto ri_box = config_t.to_box_coordination(pai);
-		auto rj_box = config_t.to_box_coordination(paj);
-		cout << "ri box: \n" << ri_box << '\n';
-		cout << "rj box: \n" << rj_box << '\n';
-		D2::VectorDd rij_box = ri_box - rj_box;
-		for (size_t i = 0; i < rij_box.size(); i++)
-		{
-			rij_box[i] -= round(rij_box[i]);
-		}
-		cout << "rij box: \n" << rij_box << '\n';
-		auto rij_car = config_t.get_m_vector_box_to_cartesian() * rij_box;
-		cout << "m_vector_box_to_cartesian * rij_box: \n" << rij_car << '\n';
+}
 
-		cout << config_t.get_m_vector_box_to_cartesian() << '\n';
-		*/
+int main(int ac, char* av[])
+{
+	namespace po = boost::program_options;
+	using namespace std;
+	try
+	{
+		po::options_description help_options("help options");
+		help_options.add_options()
+			("help", "produce help message");
+
+
+		double r_cut;
+		po::options_description rcut_options("rcut");
+		rcut_options.add_options()
+			("rcut,r", po::value<double>(&r_cut), "cutoff distance");
+
+		string ifname_t;
+		string ifname_t_;
+		string ifpath;
+		po::options_description if_options("infile options");
+		if_options.add_options()
+			("ifname_t,t", po::value<string>(&ifname_t), "input file name at time t")
+			("ifname_t-dt,T", po::value<string>(&ifname_t_), "input file name at time t-dt")
+			("ifpath,I", po::value<string>(&ifpath)->default_value("./"), "input file path");
+		po::options_description of_options("output file options");
+
+		string ofname;
+		string ofpath;
+		of_options.add_options()
+			("ofname,o", po::value<string>(&ofname)->default_value("D2"), "D2 output file name")
+			("ofpath,O", po::value<string>(&ofpath)->default_value("./"), "D2 output file path");
+
+		po::options_description allowed_options("Allowed options");
+		allowed_options.add(help_options).add(rcut_options).add(if_options).add(of_options);
+
+		po::variables_map vm;
+		po::store(po::parse_command_line(ac, av, allowed_options), vm);
+		po::notify(vm);
+		if (vm.count("help"))
+		{
+			cout << allowed_options << "\n";
+			return 1;
+		}
+		cout << "rcut: " << r_cut << '\n';
+		if (vm.count("ifname_t"))
+		{
+			cout << "input file name at time t: " << vm["ifname_t"].as<string>() << '\n';
+		}
+		else
+		{
+			throw exception("inpute file name at time t was not set.\n --help to show help");
+		}
+		if (vm.count("ifname_t-dt"))
+		{
+			cout << "input file name at time t-dt: " << vm["ifname_t-dt"].as<string>() << '\n';
+		}
+		else
+		{
+			throw exception("input file name at time t-dt was not set.\n --help to show help");
+		}
+		cout << "input file path: " << vm["ifpath"].as<string>() << '\n';
+		cout << "output file name: " << vm["ofname"].as<string>() << '\n';
+		cout << "output file path: " << vm["ofpath"].as<string>() << '\n';
+
+
+		typedef Configuration::Configuration::BoxType BoxType;
+		typedef Configuration::Configuration::PairStyle PairStyle;
+
+		string fname_t = ifpath + '/' + ifname_t;
+		string fname_t_ = ifpath + '/' + ifname_t_;
+
+		D2::Configuration_neighbours config_t(fname_t, r_cut, BoxType::tilt, PairStyle::none);
+		D2::Configuration_neighbours config_t_(fname_t_, r_cut, BoxType::tilt, PairStyle::none);
+
+		auto& vec_neighbours = config_t.get_neighbours();
+		const auto& vec_pa_t = config_t.get_particle();
+
+		vector<double> vecd_D2;
+		vecd_D2.resize(vec_pa_t.size());
+		for (size_t i = 0; i < vec_pa_t.size(); i++)
+		{
+			vecd_D2[i] = 0.;
+			const Particle& pa = config_t.get_particle()[i];
+			D2::D2 d2_pa(&pa, r_cut, &config_t, &config_t_);
+			vecd_D2[i] = d2_pa.get_D2();
+		}
+		mkdir(ofpath);
+		string offname = ofpath + '/' + ofname;
+		config_t.para_to_dump(offname, { "D2" }, { vecd_D2 });
+
+	}
+	catch (const std::exception& e)
+	{
+		cerr << "error: " << e.what() << '\n';
+	}
+	catch (...) {
+		cerr << "Exception of unknown type!\n";
+	}
 	return 0;
 }

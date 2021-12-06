@@ -1,0 +1,27 @@
+LAMMPS (18 Sep 2018)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:87)
+  using 1 OpenMP thread(s) per MPI task
+variable fname string "data.restart.DPD.shear.wi100.5280"
+variable strain equal 0.2
+read_data ${fname}
+read_data data.restart.DPD.shear.wi100.5280
+  triclinic box = (0 0 0) to (19.31 19.31 9.655) with tilt (0.15448 0 0)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  4320 atoms
+  reading velocities ...
+  4320 velocities
+change_box all xy delta ${strain} remap
+change_box all xy delta 0.2 remap
+  triclinic box = (0 0 0) to (19.31 19.31 9.655) with tilt (0.35448 0 0)
+write_data affine${strain}.${fname}
+write_data affine0.2.${fname}
+write_data affine0.2.data.restart.DPD.shear.wi100.5280
+Neighbor list info ...
+  update every 1 steps, delay 10 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 0
+  ghost atom cutoff = 0
+  binsize = 19.6645, bins = 1 1 1
+  0 neighbor lists, perpetual/occasional/extra = 0 0 0
+Total wall time: 0:00:00

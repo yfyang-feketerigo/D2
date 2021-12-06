@@ -27,7 +27,7 @@ private:
 	std::vector<double> data; //number data
 	std::vector<std::string> str_data; //string data
 	size_t totalLine; //total lines of file
-	size_t totalUnemptyLine;  //total umempty lines of file
+	size_t totalUnemptyLine;  //total unempty lines of file
 public:
 	Input(std::string _fname, size_t _headline); //constructor
 	Input(); //default constructor
