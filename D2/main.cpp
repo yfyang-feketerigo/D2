@@ -83,8 +83,12 @@ int main(int ac, char* av[])
 		cout << "output file name: " << vm["ofname"].as<string>() << '\n';
 		cout << "output file path: " << vm["ofpath"].as<string>() << '\n';
 		cout << '\n';
-		typedef Configuration::Configuration::BoxType BoxType;
-		typedef Configuration::Configuration::PairStyle PairStyle;
+
+
+		using BoxType = Configuration::Configuration::BoxType;
+		using PairStyle = Configuration::Configuration::PairStyle;
+		//typedef Configuration::Configuration::BoxType BoxType;
+		//typedef Configuration::Configuration::PairStyle PairStyle;
 
 		string fname_t = ifpath + '/' + ifname_t;
 		string fname_t_ = ifpath + '/' + ifname_t_;
@@ -94,6 +98,8 @@ int main(int ac, char* av[])
 
 		config_t.sort_particle();
 		config_t_.sort_particle();
+		config_t.sort_neighbours_as_center_pid();
+		config_t.sort_neighbours_as_center_pid();
 		auto& vec_neighbours = config_t.get_neighbours();
 		const auto& vec_pa_t = config_t.get_particle();
 

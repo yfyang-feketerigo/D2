@@ -44,21 +44,40 @@ namespace D2
 				}
 			}
 		}
-		flag_neighbous_update = true;
+		flag_neighbours_update = true;
+		flag_neighbours_sorted = false;
 	}
 
 	const Neighbours& Configuration_neighbours::get_neighbours(size_t pid) const
 	{
-		for (size_t i = 0; i < vec_neighbours.size(); i++)
+		if (flag_neighbours_sorted == false)
 		{
-			if (pid == vec_neighbours[i].p_center_pa->id)
+			for (size_t i = 0; i < vec_neighbours.size(); i++)
 			{
-				return vec_neighbours[i];
+				if (pid == vec_neighbours[i].p_center_pa->id)
+				{
+					return vec_neighbours[i];
+				}
 			}
+			std::string err_message = "particle id " + std::to_string(pid) + " not found!\n";
+			throw(std::exception(err_message.c_str()));
+			return vec_neighbours.front();
 		}
-		std::string err_message = "particle id " + std::to_string(pid) + " not found!\n";
-		throw(std::exception(err_message.c_str()));
-		return vec_neighbours.front();
+		else
+		{
+#ifdef SAFE_GET_NEIGHBOURS
+			if (pid <= 0 || pid > pvec_neighbours_sorted.size())
+			{
+				throw std::exception(("illegal pid " + std::to_string(pid) + " when get_neighbours!").c_str());
+			}
+			size_t found_id = pvec_neighbours_sorted[pid - 1]->p_center_pa->id;
+			if (found_id != pid)
+			{
+				throw std::exception("pid not match when get neighbours through sorted method, this could due to inconsecutive pid");
+			}
+#endif // SAFE_GET_NEIGHBOURS
+			return *pvec_neighbours_sorted[pid - 1];
+		}
 	}
 
 	VectorDd Configuration_neighbours::to_box_coordination(const Particle& pa) const
@@ -89,12 +108,12 @@ namespace D2
 
 	void D2::compute_Xij()
 	{
-		const Particle& (Configuration::Configuration:: * get_pa)(size_t) const;
-		if (config_t_->get_flag_sorted() && config_t->get_flag_sorted())
+		const Particle& (Configuration::Configuration:: * get_pa)(size_t) const; //member function pointer, choose diffenrent method of find partcile in config,. according to get_flag_sorted() 
+		if (config_t_->get_flag_sorted() && config_t->get_flag_sorted()) // if config has been sorted, then use get_particle_sorted to find particle, this method is faster when call-times are numerous
 		{
 			get_pa = &Configuration::Configuration::get_particle_sorted;
 		}
-		else
+		else // if config has not been sorted, then use travesal method to find particle
 		{
 			get_pa = &Configuration::Configuration::get_particle;
 		}
@@ -130,6 +149,7 @@ namespace D2
 		{
 			get_pa = &Configuration::Configuration::get_particle;
 		}
+
 		Yij.setZero();
 		const Particle& pa_0_t = *p_pa;
 		auto& pa_0_t_neighbours = config_t->get_neighbours(pa_0_t);

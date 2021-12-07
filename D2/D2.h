@@ -9,12 +9,13 @@
 #include <eigen3/Eigen/Dense>
 
 #define NO_STORE_NEIGHBOUR_RIJ
+#define SAFE_GET_NEIGHBOURS
 namespace D2
 {
 	static constexpr size_t DIMENSION = 3; // system dimension, in my case is always 3, other cases NOT tested
 	static constexpr size_t NEIGHBOUR_SIZE_REDUNDANCY = 5;//
-	typedef Eigen::Matrix<double, DIMENSION, 1>  VectorDd; // define DIMENSION-d col vector(for position, distance and other concepts in math or physics, NOT a container like std::vector)
-	typedef Eigen::Matrix<double, DIMENSION, DIMENSION> MatrixDd; // define DIMENSION * DIMENSION shape matrix
+	using VectorDd = Eigen::Matrix<double, DIMENSION, 1>;// define DIMENSION-d col vector(for position, distance and other concepts in math or physics, NOT a container like std::vector)
+	using MatrixDd = Eigen::Matrix<double, DIMENSION, DIMENSION>;// define DIMENSION * DIMENSION shape matrix
 	static MatrixDd DELTAij = MatrixDd::Identity();
 
 	struct Neighbour
@@ -76,8 +77,19 @@ namespace D2
 			_update_neighbours();
 		};
 
-
-		const std::vector<Neighbours>& get_neighbours() const { return vec_neighbours; } // return corresponding neighbours of ALL particles
+		void sort_neighbours_as_center_pid()
+		{
+			pvec_neighbours_sorted.resize(vec_neighbours.size());
+			for (size_t i = 0; i < pvec_neighbours_sorted.size(); i++)
+			{
+				pvec_neighbours_sorted[i] = &vec_neighbours[i];
+			}
+			auto comp_cid = [](const Neighbours* a, const Neighbours* b) {return a->p_center_pa->id < b->p_center_pa->id; };
+			std::sort(pvec_neighbours_sorted.begin(), pvec_neighbours_sorted.end(), comp_cid);
+			flag_neighbours_sorted = true;
+		}
+		const std::vector<Neighbours>& get_neighbours() const { return vec_neighbours; }// return corresponding neighbours of ALL particles
+		const std::vector<const Neighbours*>& get_sorted_neighbours_pvec() const { return pvec_neighbours_sorted; };
 		const Neighbours& get_neighbours(size_t pid) const; // return neighbours of given particle
 		const Neighbours& get_neighbours(const Particle& pa) const // return neighbours of given particle
 		{
@@ -95,8 +107,10 @@ namespace D2
 		const MatrixDd& get_m_vector_box_to_cartesian() const { return m_vector_box_to_cartesian; }
 	private:
 		double rcut = 0;
-		bool flag_neighbous_update = false;
+		bool flag_neighbours_update = false;
+		bool flag_neighbours_sorted = false;
 		std::vector<Neighbours> vec_neighbours;
+		std::vector<const Neighbours*> pvec_neighbours_sorted;
 		MatrixDd m_base_cartesian_to_box; // matrix, transfer base vectors from cartesian to box-base
 		MatrixDd m_base_box_to_cartesian; // matrix, inverse of m_base_cartesian_to_box
 		MatrixDd& m_vector_cartesian_to_box = m_base_box_to_cartesian;
