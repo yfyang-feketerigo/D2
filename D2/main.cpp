@@ -8,7 +8,7 @@
 #include <eigen3/Eigen/Dense>
 #include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
-
+#include <boost/filesystem.hpp>
 
 void mkdir(std::string path)
 {
@@ -23,6 +23,7 @@ int main(int ac, char* av[])
 {
 	boost::timer::cpu_timer timer;
 	namespace po = boost::program_options;
+	namespace fs = boost::filesystem;
 	using namespace std;
 	try
 	{
@@ -39,6 +40,9 @@ int main(int ac, char* av[])
 		string ifname_t;
 		string ifname_t_;
 		string ifpath;
+		fs::path fs_iffpath_t;
+		fs::path fs_iffpath_t_;
+
 		po::options_description if_options("infile options");
 		if_options.add_options()
 			("ifname_t,t", po::value<string>(&ifname_t), "input file name at time t")
@@ -70,18 +74,25 @@ int main(int ac, char* av[])
 			throw exception("rcut was not set!");
 
 		if (vm.count("ifname_t"))
-			cout << "input file name at time t: " << vm["ifname_t"].as<string>() << '\n';
+		{
+			fs_iffpath_t = fs::path(ifpath) / ifname_t;
+			cout << "input file name at time t: " << fs_iffpath_t.string() << '\n';
+		}
 		else
 			throw exception("inpute file name at time t was not set.\n --help to show help");
 
 		if (vm.count("ifname_t-dt"))
-			cout << "input file name at time t-dt: " << vm["ifname_t-dt"].as<string>() << '\n';
+		{
+			fs_iffpath_t_ = fs::path(ifpath) / ifname_t_;
+			cout << "input file name at time t-dt: " << fs_iffpath_t_.string() << '\n';
+		}
 		else
 			throw exception("input file name at time t-dt was not set.\n --help to show help");
 
-		cout << "input file path: " << vm["ifpath"].as<string>() << '\n';
-		cout << "output file name: " << vm["ofname"].as<string>() << '\n';
-		cout << "output file path: " << vm["ofpath"].as<string>() << '\n';
+		//cout << "input file path: " << vm["ifpath"].as<string>() << '\n';
+		fs::path fs_offpath = fs::path(ofpath) / ofname;
+		cout << "output file: " << fs_offpath << '\n';
+		//cout << "output file path: " << vm["ofpath"].as<string>() << '\n';
 		cout << '\n';
 
 
@@ -90,11 +101,11 @@ int main(int ac, char* av[])
 		//typedef Configuration::Configuration::BoxType BoxType;
 		//typedef Configuration::Configuration::PairStyle PairStyle;
 
-		string fname_t = ifpath + '/' + ifname_t;
-		string fname_t_ = ifpath + '/' + ifname_t_;
+		//string fname_t = ifpath + '/' + ifname_t;
+		//string fname_t_ = ifpath + '/' + ifname_t_;
 
-		D2::Configuration_neighbours config_t(fname_t, rcut, BoxType::tilt, PairStyle::none);
-		D2::Configuration_neighbours config_t_(fname_t_, rcut, BoxType::tilt, PairStyle::none);
+		D2::Configuration_neighbours config_t(fs_iffpath_t.string(), rcut, BoxType::tilt, PairStyle::none);
+		D2::Configuration_neighbours config_t_(fs_iffpath_t_.string(), rcut, BoxType::tilt, PairStyle::none);
 
 		config_t.sort_particle();
 		config_t_.sort_particle();
@@ -113,8 +124,7 @@ int main(int ac, char* av[])
 			vecd_D2[i] = d2_pa.get_D2();
 		}
 		mkdir(ofpath);
-		string offname = ofpath + '/' + ofname;
-		config_t.para_to_dump(offname, { "D2" }, { vecd_D2 });
+		config_t.para_to_dump(fs_offpath.string(), { "D2" }, { vecd_D2 });
 		cout << "done! time info: " << timer.format();
 		cout << '\n';
 	}
