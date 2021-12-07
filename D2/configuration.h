@@ -212,6 +212,8 @@ namespace Configuration
 				throw std::exception("particle not sorted when using get_particle_sorted(size_t id)!!!");
 			if (id > get_particle().size() || id <= 0)
 				throw std::exception(("Searching particle id " + std::to_string(id) + " illegal\n").c_str());
+			if (id != pvec_particle_sorted[id - 1]->id)
+				throw std::exception(("id not match when searching particle sorted! this could due to inconsecutive id.\n"));
 #endif // SAFE_GET_PARTICLE_SORTED
 			return *(pvec_particle_sorted[id - 1]);
 		}
