@@ -77,17 +77,7 @@ namespace D2
 			_update_neighbours();
 		};
 
-		void sort_neighbours_as_center_pid()
-		{
-			pvec_neighbours_sorted.resize(vec_neighbours.size());
-			for (size_t i = 0; i < pvec_neighbours_sorted.size(); i++)
-			{
-				pvec_neighbours_sorted[i] = &vec_neighbours[i];
-			}
-			auto comp_cid = [](const Neighbours* a, const Neighbours* b) {return a->p_center_pa->id < b->p_center_pa->id; };
-			std::sort(pvec_neighbours_sorted.begin(), pvec_neighbours_sorted.end(), comp_cid);
-			flag_neighbours_sorted = true;
-		}
+		void sort_neighbours_as_center_pid();
 		const std::vector<Neighbours>& get_neighbours() const { return vec_neighbours; }// return corresponding neighbours of ALL particles
 		const std::vector<const Neighbours*>& get_sorted_neighbours_pvec() const { return pvec_neighbours_sorted; };
 		const Neighbours& get_neighbours(size_t pid) const; // return neighbours of given particle

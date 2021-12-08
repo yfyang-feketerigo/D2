@@ -48,6 +48,18 @@ namespace D2
 		flag_neighbours_sorted = false;
 	}
 
+	void Configuration_neighbours::sort_neighbours_as_center_pid()
+	{
+		pvec_neighbours_sorted.resize(vec_neighbours.size());
+		for (size_t i = 0; i < pvec_neighbours_sorted.size(); i++)
+		{
+			pvec_neighbours_sorted[i] = &vec_neighbours[i];
+		}
+		auto comp_cid = [](const Neighbours* a, const Neighbours* b) {return a->p_center_pa->id < b->p_center_pa->id; };
+		std::sort(pvec_neighbours_sorted.begin(), pvec_neighbours_sorted.end(), comp_cid);
+		flag_neighbours_sorted = true;
+	}
+
 	const Neighbours& Configuration_neighbours::get_neighbours(size_t pid) const
 	{
 		if (flag_neighbours_sorted == false)

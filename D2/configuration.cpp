@@ -230,6 +230,54 @@ namespace Configuration
 		infile.close();
 	}
 
+	const Particle& Configuration::get_particle(size_t _id) const //return particle with given ID
+	{
+		for (size_t i = 0; i < vec_particle.size(); i++)
+		{
+			if (_id == vec_particle[i].id)
+			{
+				return vec_particle[i];
+			}
+		}
+		std::cerr << "particle " << _id << " not found";
+		throw("particle " + std::to_string(_id) + " not found");
+	}
+
+	void Configuration::sort_particle()
+	{
+		auto comp_id = [](const Particle* a, const Particle* b) {return a->id <= b->id; };
+		pvec_particle_sorted.resize(vec_particle.size());
+		for (size_t i = 0; i < pvec_particle_sorted.size(); i++)
+		{
+			pvec_particle_sorted[i] = &vec_particle[i];
+		}
+		std::sort(pvec_particle_sorted.begin(), pvec_particle_sorted.end(), comp_id);
+		flag_particle_sorted = true;
+	}
+
+	const std::vector<const Particle*>& Configuration::get_pvec_particle_sorted() const
+	{
+#ifdef SAFE_GET_PARTICLE_SORTED
+		if (!flag_particle_sorted)
+			throw std::exception("particle not sorted when using get_particle_sorted()!!!");
+#endif // SAFE_GET_PARTICLE_SORTED
+		return pvec_particle_sorted;
+	}
+
+	const Particle& Configuration::get_particle_sorted(size_t id) const // CAUTION! this method need all particle id be consecutive and start with 0;
+	{
+		//std::cout << "using sorted!" << '\n';
+#ifdef SAFE_GET_PARTICLE_SORTED
+		if (!flag_particle_sorted)
+			throw std::exception("particle not sorted when using get_particle_sorted(size_t id)!!!");
+		if (id > get_particle().size() || id <= 0)
+			throw std::exception(("Searching particle id " + std::to_string(id) + " illegal\n").c_str());
+		if (id != pvec_particle_sorted[id - 1]->id)
+			throw std::exception(("id not match when searching particle sorted! this could due to inconsecutive id.\n"));
+#endif // SAFE_GET_PARTICLE_SORTED
+		return *(pvec_particle_sorted[id - 1]);
+	}
+
 	size_t Configuration::__add_particle(const Particle& new_pa) //新添加一个粒子
 	{
 		bool flag_inbox = new_pa.rx >= xlo && new_pa.rx <= xhi
