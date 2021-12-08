@@ -46,7 +46,7 @@ int main(int ac, char* av[])
 		po::options_description if_options("infile options");
 		if_options.add_options()
 			("ifname_t,t", po::value<string>(&ifname_t), "input file name at time t")
-			("ifname_t-dt,T", po::value<string>(&ifname_t_), "input file name at time t-dt")
+			("ifname_t-dt,0", po::value<string>(&ifname_t_), "input file name at time t-dt")
 			("ifpath,I", po::value<string>(&ifpath)->default_value("./"), "input file path");
 		po::options_description of_options("output file options");
 
