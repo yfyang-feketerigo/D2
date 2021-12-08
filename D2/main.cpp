@@ -89,20 +89,14 @@ int main(int ac, char* av[])
 		else
 			throw exception("input file name at time t-dt was not set.\n --help to show help");
 
-		//cout << "input file path: " << vm["ifpath"].as<string>() << '\n';
 		fs::path fs_offpath = fs::path(ofpath) / ofname;
 		cout << "output file: " << fs_offpath << '\n';
-		//cout << "output file path: " << vm["ofpath"].as<string>() << '\n';
+
 		cout << '\n';
 
 
 		using BoxType = Configuration::Configuration::BoxType;
 		using PairStyle = Configuration::Configuration::PairStyle;
-		//typedef Configuration::Configuration::BoxType BoxType;
-		//typedef Configuration::Configuration::PairStyle PairStyle;
-
-		//string fname_t = ifpath + '/' + ifname_t;
-		//string fname_t_ = ifpath + '/' + ifname_t_;
 
 		D2::Configuration_neighbours config_t(fs_iffpath_t.string(), rcut, BoxType::tilt, PairStyle::none);
 		D2::Configuration_neighbours config_t_(fs_iffpath_t_.string(), rcut, BoxType::tilt, PairStyle::none);
