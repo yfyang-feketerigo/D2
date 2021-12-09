@@ -42,14 +42,22 @@ int main(int ac, char* av[])
 		string ifpath;
 		fs::path fs_iffpath_t;
 		fs::path fs_iffpath_t_;
+		string pairstyle_t;
+		string pairstyle_t_;
+		string boxtype_t;
+		string boxtype_t_;
 
 		po::options_description if_options("infile options");
 		if_options.add_options()
 			("ifname_t,t", po::value<string>(&ifname_t), "input file name at time t")
 			("ifname_t-dt,0", po::value<string>(&ifname_t_), "input file name at time t-dt")
-			("ifpath,I", po::value<string>(&ifpath)->default_value("./"), "input file path");
-		po::options_description of_options("output file options");
+			("ifpath,I", po::value<string>(&ifpath)->default_value("./"), "input file path")
+			("pairstyle_t", po::value<string>(&pairstyle_t)->default_value("none"), "input pair style of data file at time t")
+			("pairstyle_t-dt", po::value<string>(&pairstyle_t_)->default_value("none"), "input pair style of data file at time t-dt")
+			("boxtype_t", po::value<string>(&boxtype_t)->default_value("tilt"), "input box type of data file at time t")
+			("boxtype_t_", po::value<string>(&boxtype_t_)->default_value("tilt"), "input box type of data file at time t-dt");
 
+		po::options_description of_options("output file options");
 		string ofname;
 		string ofpath;
 		of_options.add_options()
@@ -77,6 +85,8 @@ int main(int ac, char* av[])
 		{
 			fs_iffpath_t = fs::path(ifpath) / ifname_t;
 			cout << "input file name at time t: " << fs_iffpath_t.string() << '\n';
+			cout << "input pair style at time t: " << pairstyle_t << '\n';
+			cout << "input box type at time t: " << boxtype_t << '\n';
 		}
 		else
 			throw exception("inpute file name at time t was not set.\n --help to show help");
@@ -85,6 +95,8 @@ int main(int ac, char* av[])
 		{
 			fs_iffpath_t_ = fs::path(ifpath) / ifname_t_;
 			cout << "input file name at time t-dt: " << fs_iffpath_t_.string() << '\n';
+			cout << "input pair style at time t-dt: " << pairstyle_t_ << '\n';
+			cout << "input box type at time t-dt: " << boxtype_t_ << '\n';
 		}
 		else
 			throw exception("input file name at time t-dt was not set.\n --help to show help");
@@ -97,9 +109,13 @@ int main(int ac, char* av[])
 
 		using BoxType = Configuration::Configuration::BoxType;
 		using PairStyle = Configuration::Configuration::PairStyle;
+		BoxType bt_t = Configuration::Configuration::string_to_BoxType(boxtype_t);
+		PairStyle ps_t = Configuration::Configuration::string_to_PairStyle(pairstyle_t);
+		BoxType bt_t_ = Configuration::Configuration::string_to_BoxType(boxtype_t_);
+		PairStyle ps_t_ = Configuration::Configuration::string_to_PairStyle(pairstyle_t_);
 
-		D2::Configuration_neighbours config_t(fs_iffpath_t.string(), rcut, BoxType::tilt, PairStyle::none);
-		D2::Configuration_neighbours config_t_(fs_iffpath_t_.string(), rcut, BoxType::tilt, PairStyle::none);
+		D2::Configuration_neighbours config_t(fs_iffpath_t.string(), rcut, bt_t, ps_t);
+		D2::Configuration_neighbours config_t_(fs_iffpath_t_.string(), rcut, bt_t_, ps_t_);
 
 		config_t.sort_particle();
 		config_t_.sort_particle();

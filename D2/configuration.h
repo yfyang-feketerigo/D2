@@ -21,6 +21,7 @@
 #include <vector>
 #include <initializer_list>
 #include <algorithm>
+#include <map>
 //#define LOG_ON_SCREEN
 #define SAFE_GET_PARTICLE_SORTED
 namespace Configuration
@@ -75,6 +76,20 @@ namespace Configuration
 			pair,
 			none
 		};
+		static BoxType string_to_BoxType(std::string str)
+		{
+			if (str == "orthogonal") return BoxType::orthogonal;
+			else if (str == "tilt")	return BoxType::tilt;
+			else throw std::exception(("unknown box type: " + str).c_str());
+		}
+		static PairStyle string_to_PairStyle(std::string str)
+		{
+			if (str == "single") return PairStyle::single;
+			else if (str == "pair") return PairStyle::pair;
+			else if (str == "none") return PairStyle::none;
+			else throw std::exception(("unknown pair style: " + str).c_str());
+		}
+
 		Configuration(std::string config_file, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single, bool _is_sorted = false);
 		Configuration() {};
 		inline size_t GET_LINE_MAX() { return LINE_SKIP_MAX; }
