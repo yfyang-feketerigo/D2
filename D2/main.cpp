@@ -52,10 +52,10 @@ int main(int ac, char* av[])
 			("ifname_t,t", po::value<string>(&ifname_t), "input file name at time t")
 			("ifname_t-dt,0", po::value<string>(&ifname_t_), "input file name at time t-dt")
 			("ifpath,I", po::value<string>(&ifpath)->default_value("./"), "input file path")
-			("pairstyle_t", po::value<string>(&pairstyle_t)->default_value("none"), "input pair style of data file at time t")
-			("pairstyle_t-dt", po::value<string>(&pairstyle_t_)->default_value("none"), "input pair style of data file at time t-dt")
-			("boxtype_t", po::value<string>(&boxtype_t)->default_value("tilt"), "input box type of data file at time t")
-			("boxtype_t_", po::value<string>(&boxtype_t_)->default_value("tilt"), "input box type of data file at time t-dt");
+			("pairstyle_t", po::value<string>(&pairstyle_t)->default_value("none"), "input pair style('none' 'pair' 'single') of data file at time t")
+			("pairstyle_t-dt", po::value<string>(&pairstyle_t_)->default_value("none"), "input pair style('none' 'pair' 'single') of data file at time t-dt")
+			("boxtype_t", po::value<string>(&boxtype_t)->default_value("tilt"), "input box type('tilt' 'orthogonal') of data file at time t")
+			("boxtype_t_", po::value<string>(&boxtype_t_)->default_value("tilt"), "input box type('tilt' 'orthogonal') of data file at time t-dt");
 
 		po::options_description of_options("output file options");
 		string ofname;
