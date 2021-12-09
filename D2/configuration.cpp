@@ -180,14 +180,12 @@ namespace Configuration
 		clog << '\n' << "File HEAD LINE: " << HEAD_INFO_LINE << '\n';
 		clog << "File GAP LINE: " << GAP_LINE << '\n';
 		clog << '\n';
+		clog << "Reading coordinates..." << '\n';
 #endif // LOG_ON_SCREEN
 		Input in_data(config_file, HEAD_INFO_LINE);
 		/*
 		* 开始处理粒子坐标信息
 		*/
-#ifdef LOG_ON_SCREEN
-		clog << "Reading coordinates..." << '\n';
-#endif // LOG_ON_SCREEN
 		in_data.open_file();
 		in_data.skiphead();
 		vec_particle.resize(particle_num);
@@ -207,13 +205,11 @@ namespace Configuration
 		in_data.skip_line(GAP_LINE); //跳过坐标与速度间空行
 #ifdef LOG_ON_SCREEN
 		clog << "Coordinates have been read!" << '\n';
+		clog << "Reading velocities..." << '\n';
 #endif // LOG_ON_SCREEN
 		/*
 		* 开始处理粒子速度信息
 		*/
-#ifdef LOG_ON_SCREEN
-		clog << "Reading velocities..." << '\n';
-#endif // LOG_ON_SCREEN
 		for (size_t i = 0; i < particle_num; i++)
 		{
 			in_data.read_line_data();
@@ -221,7 +217,7 @@ namespace Configuration
 			p_particle.vx = in_data.get_data()[1];
 			p_particle.vy = in_data.get_data()[2];
 			p_particle.vz = in_data.get_data()[3];
-		}
+	}
 #ifdef LOG_ON_SCREEN
 		clog << "Velocities have been read!" << '\n';
 		clog << "Configuration data file " << config_file << " has been read!" << '\n';
@@ -364,7 +360,7 @@ namespace Configuration
 		if (!boost::filesystem::exists(opath))
 		{
 			boost::filesystem::create_directories(opath);
-		}
+	}
 		string full_opath = opath + ofname;
 
 		ofstream ofile;
@@ -422,5 +418,5 @@ namespace Configuration
 		cerr << "wrong dump style: " << style << '\n';
 		throw std::exception(("wrong dump style: " + style).c_str());
 
-	}
+}
 }
