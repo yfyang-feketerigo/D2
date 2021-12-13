@@ -92,6 +92,8 @@ namespace Configuration
 
 		Configuration(std::string config_file, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single, bool _is_sorted = false);
 		Configuration() {};
+		Configuration(const Configuration&) = delete;
+		Configuration& operator= (const Configuration&) = delete;
 		inline size_t GET_LINE_MAX() { return LINE_SKIP_MAX; }
 		inline size_t GET_HEAD_INFO_LINE() { return HEAD_INFO_LINE; }
 		inline static size_t GET_GAP_LINE() { return GAP_LINE; }

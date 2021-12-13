@@ -31,7 +31,8 @@ private:
 public:
 	Input(std::string _fname, size_t _headline); //constructor
 	Input(); //default constructor
-
+	Input(const Input&) = delete;
+	Input& operator=(const Input&) = delete;
 	inline const std::string& get_fname() { return fname; }; //return file name
 	inline const std::vector<double>& get_data() const { //return number data line
 		if (!data.empty())

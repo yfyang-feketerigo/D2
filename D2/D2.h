@@ -55,6 +55,8 @@ namespace D2
 		template<typename T>
 		T square(T x) { return x * x; }; // define x^2
 		void _update_neighbours(); // update neighbours
+		Configuration_neighbours(const Configuration_neighbours& config) = delete;
+		Configuration_neighbours& operator=(const Configuration& config) = delete;
 		Configuration_neighbours(std::string config_file, double _r_cut, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single)
 			:Configuration(config_file, _boxtype, _pairstyle)
 			/*
@@ -112,6 +114,8 @@ namespace D2
 	{
 	public:
 		D2() {};
+		D2(const D2&) = delete;
+		D2& operator=(const D2&) = delete;
 		D2(const Particle* _pa, double _rcut, const Configuration_neighbours* _config_t, const Configuration_neighbours* _config_t_)
 			/*
 			* compute D^2_min, see:
