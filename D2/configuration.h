@@ -5,7 +5,8 @@
 //			add func: get_lx(), get_ly(), get_lz()
 // 20211129 规范namespace
 // 20211206 add: 对id连续的粒子按id排序，并且利用排序后粒子组快速检索 const Particle& get_particle_sorted(size_t id)，排序信息储存在std::vector<const Particle*> pvec_particle_sorted中
-//               注意该方法要求粒子ID连续，且从0开始。				
+//               注意该方法要求粒子ID连续，且从0开始。	
+// 20211213 fix: 正确的拷贝构造函数和 operator=
 /*
 * 用于读取KA模型（纯LJ粒子）体系LAMMPS data文件
 * 同时允许输出单粒子的参量，使用para_to_dump方法
@@ -92,8 +93,8 @@ namespace Configuration
 
 		Configuration(std::string config_file, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single, bool _is_sorted = false);
 		Configuration() {};
-		Configuration(const Configuration&) = delete;
-		Configuration& operator= (const Configuration&) = delete;
+		Configuration(const Configuration& conf); // copy constructor, NOTICE: if conf are sorted, this new obj will excute sort_particle(), this will add additional costs;
+		Configuration& operator= (const Configuration& conf); // NOTICE: if conf are sorted, this new obj will excute sort_particle(), this will add additional costs;
 		inline size_t GET_LINE_MAX() { return LINE_SKIP_MAX; }
 		inline size_t GET_HEAD_INFO_LINE() { return HEAD_INFO_LINE; }
 		inline static size_t GET_GAP_LINE() { return GAP_LINE; }

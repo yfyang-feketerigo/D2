@@ -48,6 +48,67 @@ namespace D2
 		flag_neighbours_sorted = false;
 	}
 
+	Configuration_neighbours::Configuration_neighbours(const Configuration_neighbours& config) :Configuration::Configuration(config)
+	{
+		this->rcut = config.rcut;
+		if (config.flag_neighbours_update)
+		{
+			this->_update_neighbours();
+		}
+		else
+		{
+			this->flag_neighbours_update = false;
+			this->vec_neighbours = std::vector<Neighbours>();
+		}
+		if (config.flag_neighbours_sorted)
+		{
+			this->sort_neighbours_as_center_pid();
+		}
+		else
+		{
+			this->flag_neighbours_sorted = false;
+			this->pvec_neighbours_sorted = std::vector<const Neighbours*>();
+		}
+		this->m_base_cartesian_to_box = config.m_base_cartesian_to_box;
+		this->m_base_box_to_cartesian = config.m_base_box_to_cartesian;
+		this->m_vector_cartesian_to_box = this->m_base_box_to_cartesian;
+		this->m_vector_box_to_cartesian = this->m_base_cartesian_to_box;
+	}
+
+	Configuration_neighbours& Configuration_neighbours::operator=(const Configuration_neighbours& config)
+	{
+		if (this == &config)
+		{
+			return *this;
+		}
+		Configuration::Configuration:: operator= (config);
+		this->rcut = config.rcut;
+		if (config.flag_neighbours_update)
+		{
+			this->_update_neighbours();
+		}
+		else
+		{
+			this->flag_neighbours_update = false;
+			this->vec_neighbours = std::vector<Neighbours>();
+		}
+		if (config.flag_neighbours_sorted)
+		{
+			this->sort_neighbours_as_center_pid();
+		}
+		else
+		{
+			this->flag_neighbours_sorted = false;
+			this->pvec_neighbours_sorted = std::vector<const Neighbours*>();
+		}
+		this->m_base_cartesian_to_box = config.m_base_cartesian_to_box;
+		this->m_base_box_to_cartesian = config.m_base_box_to_cartesian;
+		this->m_vector_cartesian_to_box = this->m_base_box_to_cartesian;
+		this->m_vector_box_to_cartesian = this->m_base_cartesian_to_box;
+		return *this;
+		// TODO: 在此处插入 return 语句
+	}
+
 	void Configuration_neighbours::sort_neighbours_as_center_pid()
 	{
 		pvec_neighbours_sorted.resize(vec_neighbours.size());

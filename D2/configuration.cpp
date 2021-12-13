@@ -217,13 +217,79 @@ namespace Configuration
 			p_particle.vx = in_data.get_data()[1];
 			p_particle.vy = in_data.get_data()[2];
 			p_particle.vz = in_data.get_data()[3];
-	}
+		}
 #ifdef LOG_ON_SCREEN
 		clog << "Velocities have been read!" << '\n';
 		clog << "Configuration data file " << config_file << " has been read!" << '\n';
 		clog << '\n';
 #endif // LOG_ON_SCREEN
 		infile.close();
+	}
+
+	Configuration::Configuration(const Configuration& conf)
+	{
+		this->HEAD_INFO_LINE = conf.HEAD_INFO_LINE;
+		this->particle_num = conf.particle_num;
+		this->timestep = conf.timestep;
+		this->xlo = conf.xlo;
+		this->ylo = conf.ylo;
+		this->zlo = conf.zlo;
+		this->xhi = conf.xhi;
+		this->yhi = conf.yhi;
+		this->zhi = conf.zhi;
+		this->lx = conf.lx;
+		this->ly = conf.ly;
+		this->lz = conf.lz;
+		this->type_num = conf.type_num;
+		this->strvec_mass_info = conf.strvec_mass_info;
+		this->strvec_pair_info = conf.strvec_pair_info;
+		this->str_atoms_info = conf.str_atoms_info;
+		this->vec_particle = conf.vec_particle;
+		if (conf.flag_particle_sorted)
+		{
+			this->sort_particle();
+		}
+		else
+		{
+			this->flag_particle_sorted = false;
+			this->pvec_particle_sorted.clear();
+			this->pvec_particle_sorted = std::vector<const Particle*>();
+		}
+	}
+
+	Configuration& Configuration::operator=(const Configuration& conf)
+	{
+		if (this != &conf)
+		{
+			this->HEAD_INFO_LINE = conf.HEAD_INFO_LINE;
+			this->particle_num = conf.particle_num;
+			this->timestep = conf.timestep;
+			this->xlo = conf.xlo;
+			this->ylo = conf.ylo;
+			this->zlo = conf.zlo;
+			this->xhi = conf.xhi;
+			this->yhi = conf.yhi;
+			this->zhi = conf.zhi;
+			this->lx = conf.lx;
+			this->ly = conf.ly;
+			this->lz = conf.lz;
+			this->type_num = conf.type_num;
+			this->strvec_mass_info = conf.strvec_mass_info;
+			this->strvec_pair_info = conf.strvec_pair_info;
+			this->str_atoms_info = conf.str_atoms_info;
+			this->vec_particle = conf.vec_particle;
+			if (conf.flag_particle_sorted)
+			{
+				this->sort_particle();
+			}
+			else
+			{
+				this->flag_particle_sorted = false;
+				this->pvec_particle_sorted.clear();
+				this->pvec_particle_sorted = std::vector<const Particle*>();
+			}
+		}
+		return *this;
 	}
 
 	const Particle& Configuration::get_particle(size_t _id) const //return particle with given ID
@@ -360,7 +426,7 @@ namespace Configuration
 		if (!boost::filesystem::exists(opath))
 		{
 			boost::filesystem::create_directories(opath);
-	}
+		}
 		string full_opath = opath + ofname;
 
 		ofstream ofile;
@@ -418,5 +484,5 @@ namespace Configuration
 		cerr << "wrong dump style: " << style << '\n';
 		throw std::exception(("wrong dump style: " + style).c_str());
 
-}
+	}
 }

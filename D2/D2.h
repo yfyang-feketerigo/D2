@@ -55,8 +55,8 @@ namespace D2
 		template<typename T>
 		T square(T x) { return x * x; }; // define x^2
 		void _update_neighbours(); // update neighbours
-		Configuration_neighbours(const Configuration_neighbours& config) = delete;
-		Configuration_neighbours& operator=(const Configuration& config) = delete;
+		Configuration_neighbours(const Configuration_neighbours& config); // EXTRA COSTS WARNING: _update_neighbours() & sort_neighbours_as_center_pid() could be excuted according to corresponding flag
+		Configuration_neighbours& operator=(const Configuration_neighbours& config);// EXTRA COSTS WARNING: _update_neighbours() & sort_neighbours_as_center_pid() could be excuted according to corresponding flag
 		Configuration_neighbours(std::string config_file, double _r_cut, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single)
 			:Configuration(config_file, _boxtype, _pairstyle)
 			/*
