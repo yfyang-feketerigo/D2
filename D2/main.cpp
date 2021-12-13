@@ -32,10 +32,13 @@ int main()
 		ptest.sort_particle();
 		D2::Configuration_neighbours new_test(ptest);
 		D2::Configuration_neighbours ptest2(testfname2, 2.5, Boxtype::tilt, Pairstyle::none);
-		//ptest = ptest2;
-		cout << new_test.get_pvec_particle_sorted().size() << '\n';
+
+		cout << ptest.get_neighbours(21).vec_neighbours.size() << '\n';
+		cout << new_test.get_neighbours(21).vec_neighbours.size() << '\n';
+		ptest = ptest2;
 		new_test = ptest2;
-		cout << new_test.get_pvec_particle_sorted().size() << '\n';
+		cout << ptest.get_neighbours(21).vec_neighbours.size() << '\n';
+		cout << new_test.get_neighbours(21).vec_neighbours.size() << '\n';
 	}
 	catch (const std::exception& e)
 	{

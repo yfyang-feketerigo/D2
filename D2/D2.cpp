@@ -3,6 +3,7 @@ namespace D2
 {
 	void Configuration_neighbours::_update_neighbours()
 	{
+		vec_neighbours.clear();
 		double rho = get_particle_num() / get_lx() / get_ly() / get_lz();
 		size_t reserve_neighbour_size = size_t(rho * rcut * rcut * rcut) + NEIGHBOUR_SIZE_REDUNDANCY;
 
@@ -51,6 +52,10 @@ namespace D2
 	Configuration_neighbours::Configuration_neighbours(const Configuration_neighbours& config) :Configuration::Configuration(config)
 	{
 		this->rcut = config.rcut;
+		this->m_base_cartesian_to_box = config.m_base_cartesian_to_box;
+		this->m_base_box_to_cartesian = config.m_base_box_to_cartesian;
+		this->m_vector_cartesian_to_box = this->m_base_box_to_cartesian;
+		this->m_vector_box_to_cartesian = this->m_base_cartesian_to_box;
 		if (config.flag_neighbours_update)
 		{
 			this->_update_neighbours();
@@ -69,10 +74,7 @@ namespace D2
 			this->flag_neighbours_sorted = false;
 			this->pvec_neighbours_sorted = std::vector<const Neighbours*>();
 		}
-		this->m_base_cartesian_to_box = config.m_base_cartesian_to_box;
-		this->m_base_box_to_cartesian = config.m_base_box_to_cartesian;
-		this->m_vector_cartesian_to_box = this->m_base_box_to_cartesian;
-		this->m_vector_box_to_cartesian = this->m_base_cartesian_to_box;
+
 	}
 
 	Configuration_neighbours& Configuration_neighbours::operator=(const Configuration_neighbours& config)
