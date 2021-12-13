@@ -85,6 +85,10 @@ namespace D2
 		}
 		Configuration::Configuration:: operator= (config);
 		this->rcut = config.rcut;
+		this->m_base_cartesian_to_box = config.m_base_cartesian_to_box;
+		this->m_base_box_to_cartesian = config.m_base_box_to_cartesian;
+		this->m_vector_cartesian_to_box = this->m_base_box_to_cartesian;
+		this->m_vector_box_to_cartesian = this->m_base_cartesian_to_box;
 		if (config.flag_neighbours_update)
 		{
 			this->_update_neighbours();
@@ -103,10 +107,7 @@ namespace D2
 			this->flag_neighbours_sorted = false;
 			this->pvec_neighbours_sorted = std::vector<const Neighbours*>();
 		}
-		this->m_base_cartesian_to_box = config.m_base_cartesian_to_box;
-		this->m_base_box_to_cartesian = config.m_base_box_to_cartesian;
-		this->m_vector_cartesian_to_box = this->m_base_box_to_cartesian;
-		this->m_vector_box_to_cartesian = this->m_base_cartesian_to_box;
+
 		return *this;
 		// TODO: 在此处插入 return 语句
 	}
