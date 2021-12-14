@@ -1,7 +1,7 @@
-#include "D2.h"
-#include "particle.h"
-#include "configuration.h"
-#include "input.h"
+#include "../D2/D2.h"
+#include "../D2/particle.h"
+#include "../D2/configuration.h"
+#include "../D2/input.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
