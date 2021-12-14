@@ -211,7 +211,7 @@ namespace Configuration
 		void to_data(std::string fname, BoxType _boxtype = BoxType::tilt);
 
 		template<typename T>
-		void para_to_dump(std::string fname, std::initializer_list<std::string> add_para_name, std::initializer_list<std::vector<T>> add_para, std::vector<std::string> comments = {}) const//注意额外参量与粒子序号的对应关系
+		void para_to_dump(const std::string&& fname, const std::initializer_list<std::string>&& add_para_name, const std::initializer_list<std::vector<T>>&& add_para, const std::vector<std::string>&& comments = {}) const//注意额外参量与粒子序号的对应关系
 		{
 			std::ofstream ofile;
 			ofile.open(fname);
