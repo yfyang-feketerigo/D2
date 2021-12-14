@@ -237,6 +237,9 @@ namespace Configuration
 		this->xhi = conf.xhi;
 		this->yhi = conf.yhi;
 		this->zhi = conf.zhi;
+		this->xy = conf.xy;
+		this->xz = conf.xz;
+		this->yz = conf.yz;
 		this->lx = conf.lx;
 		this->ly = conf.ly;
 		this->lz = conf.lz;
@@ -253,7 +256,7 @@ namespace Configuration
 		{
 			this->flag_particle_sorted = false;
 			this->pvec_particle_sorted.clear();
-			this->pvec_particle_sorted = std::vector<const Particle*>();
+			this->pvec_particle_sorted = std::move(std::vector<const Particle*>());
 		}
 	}
 
@@ -270,6 +273,9 @@ namespace Configuration
 			this->xhi = conf.xhi;
 			this->yhi = conf.yhi;
 			this->zhi = conf.zhi;
+			this->xy = conf.xy;
+			this->xz = conf.xz;
+			this->yz = conf.yz;
 			this->lx = conf.lx;
 			this->ly = conf.ly;
 			this->lz = conf.lz;
@@ -286,7 +292,7 @@ namespace Configuration
 			{
 				this->flag_particle_sorted = false;
 				this->pvec_particle_sorted.clear();
-				this->pvec_particle_sorted = std::vector<const Particle*>();
+				this->pvec_particle_sorted = std::move(std::vector<const Particle*>());
 			}
 		}
 		return *this;

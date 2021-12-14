@@ -63,7 +63,7 @@ namespace D2
 		else
 		{
 			this->flag_neighbours_update = false;
-			this->vec_neighbours = std::vector<Neighbours>();
+			this->vec_neighbours = std::move(std::vector<Neighbours>());
 		}
 		if (config.flag_neighbours_sorted)
 		{
@@ -72,7 +72,7 @@ namespace D2
 		else
 		{
 			this->flag_neighbours_sorted = false;
-			this->pvec_neighbours_sorted = std::vector<const Neighbours*>();
+			this->pvec_neighbours_sorted = std::move(std::vector<const Neighbours*>());
 		}
 
 	}
@@ -96,7 +96,7 @@ namespace D2
 		else
 		{
 			this->flag_neighbours_update = false;
-			this->vec_neighbours = std::vector<Neighbours>();
+			this->vec_neighbours = std::move(std::vector<Neighbours>());
 		}
 		if (config.flag_neighbours_sorted)
 		{
@@ -105,7 +105,7 @@ namespace D2
 		else
 		{
 			this->flag_neighbours_sorted = false;
-			this->pvec_neighbours_sorted = std::vector<const Neighbours*>();
+			this->pvec_neighbours_sorted = std::move(std::vector<const Neighbours*>());
 		}
 
 		return *this;
