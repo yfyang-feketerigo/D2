@@ -43,9 +43,11 @@ int main()
 	catch (const std::exception& e)
 	{
 		cerr << "error: " << e.what() << '\n';
+		return -1;
 	}
 	catch (...) {
 		cerr << "Exception of unknown type!\n";
+		return -10;
 	}
 	return 0;
 }

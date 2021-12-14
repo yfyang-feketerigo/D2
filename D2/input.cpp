@@ -161,7 +161,12 @@ size_t Input::read_line_data(char delimiter, bool skip_empty)
 				{
 					if (line.empty())
 					{
-						cerr << "skip reading EMPTY data line " << linePointer << endl;
+#ifdef NO_THROW_EMPTY_LINE
+						cerr << "!!!WARNING!!!: skip reading EMPTY data line " << linePointer << " at" << fname << '\n'
+							<< "this may cause SEVERE problems when using date\n";
+#else
+						throw std::exception(("trying reading EMPTY data line: " + std::to_string(linePointer) + " at file: " + fname).c_str());
+#endif // NO_THROW_EMPTY_LINE
 						linePointer += 1;
 					}
 				}

@@ -121,20 +121,20 @@ int main(int ac, char* av[])
 		config_t_.sort_particle();
 		config_t.sort_neighbours_as_center_pid();
 		config_t.sort_neighbours_as_center_pid();
-		auto& vec_neighbours = config_t.get_neighbours();
-		const auto& vec_pa_t = config_t.get_particle();
+		//auto& vec_neighbours = config_t.get_neighbours();
+		const auto& vec_pa_t_ = config_t_.get_particle();
 
 		vector<double> vecd_D2;
-		vecd_D2.resize(vec_pa_t.size());
-		for (size_t i = 0; i < vec_pa_t.size(); i++)
+		vecd_D2.resize(vec_pa_t_.size());
+		for (size_t i = 0; i < vec_pa_t_.size(); i++)
 		{
 			vecd_D2[i] = 0.;
-			const Particle& pa = config_t.get_particle()[i];
+			const Particle& pa = vec_pa_t_[i];
 			D2::D2 d2_pa(&pa, rcut, &config_t, &config_t_);
 			vecd_D2[i] = d2_pa.get_D2();
 		}
 		mkdir(ofpath);
-		config_t.para_to_dump(fs_offpath.string(), { "D2" }, { vecd_D2 });
+		config_t_.para_to_dump(fs_offpath.string(), { "D2" }, { vecd_D2 });
 		cout << "done! time info: " << timer.format();
 		cout << '\n';
 	}

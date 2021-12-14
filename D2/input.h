@@ -14,6 +14,7 @@
 #include <vector>
 #include <sstream>
 #include <limits>
+//#define NO_THROW_EMPTY_LINE
 
 std::string& trim(std::string& s);
 class Input
@@ -42,7 +43,7 @@ public:
 		else
 		{
 			std::cerr << "line " << linePointer << " is EMPTY" << std::endl;
-			throw "trying get empty data";
+			throw std::exception("trying get empty data");
 		}
 
 	}

@@ -195,7 +195,7 @@ namespace D2
 		}
 
 		Xij.setZero();
-		const Particle& pa_0_t = *p_pa;
+		const Particle& pa_0_t = (config_t->*get_pa) (p_pa->id);
 		auto& pa_0_t_neighbours = config_t->get_neighbours(pa_0_t);
 		const Particle& pa_0_t_ = (config_t_->*get_pa)(pa_0_t.id);
 		for (size_t n = 0; n < pa_0_t_neighbours.vec_neighbours.size(); n++)
@@ -227,7 +227,7 @@ namespace D2
 		}
 
 		Yij.setZero();
-		const Particle& pa_0_t = *p_pa;
+		const Particle& pa_0_t = (config_t->*get_pa) (p_pa->id);
 		auto& pa_0_t_neighbours = config_t->get_neighbours(pa_0_t);
 
 		const Particle& pa_0_t_ = (config_t_->*get_pa)(pa_0_t.id);
@@ -268,7 +268,7 @@ namespace D2
 		}
 
 		compute_epsilonij();
-		const Particle& pa_0_t = *p_pa;
+		const Particle& pa_0_t = (config_t->*get_pa) (p_pa->id);
 		const Particle& pa_0_t_ = (config_t_->*get_pa)(pa_0_t.id);
 		const auto& pvec_ngbrs_0_t = config_t->get_neighbours(pa_0_t).vec_neighbours;
 		d2 = 0;
