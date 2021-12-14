@@ -38,10 +38,10 @@
     <ClCompile Include="..\D2\input.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\D2\main.cpp">
+    <ClCompile Include="..\D2\particle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\D2\particle.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

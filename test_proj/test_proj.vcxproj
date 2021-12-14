@@ -148,8 +148,8 @@
     <ClCompile Include="..\D2\configuration.cpp" />
     <ClCompile Include="..\D2\D2.cpp" />
     <ClCompile Include="..\D2\input.cpp" />
-    <ClCompile Include="..\D2\main.cpp" />
     <ClCompile Include="..\D2\particle.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data.restart.DPD.shear.wi100.241560" />
