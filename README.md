@@ -15,4 +15,6 @@ files:
 * **input.h**, class *Input*, a class used to read files as line by line
 * **particle.h**, contains sturcture *Particle* 
 
+* dir **PythonTools** contains some automation tools and useful tools like *isoconfiguration average*(see: Widmer-Cooper, A., Harrowell, P., & Fynewever, H. (2004). How Reproducible Are Dynamic Heterogeneities in a Supercooled Liquid? Physical Review Letters, 93(13), 135701. doi:10.1103/PhysRevLett.93.135701
+)
 
