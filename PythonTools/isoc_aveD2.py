@@ -11,7 +11,7 @@ def main():
     header = 9
     list_str_header = []
     isoc_num = 100
-    sample_num = 1
+    sample_num = 20
     for it_sample in range(sample_num):
         list_ave_D2 = []
         for it_isoc in range(isoc_num):
@@ -48,7 +48,7 @@ def main():
                 iline = list_ave_D2[i].to_string()
                 # print(iline)
                 print(iline, file=of)
-        print('done!')
+        print('{} done!'.format(it_sample))
         time_end = time.time()
         print('time cost:', time_end - time_start, 's')
 

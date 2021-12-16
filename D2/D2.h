@@ -158,23 +158,23 @@ namespace D2
 		/* compute D2, and set flag_computed_D2 to be true, allowing get D2 using get_D2()
 		* results will be stored in this->d2, which is a double type scalar data
 		*/
-		MatrixDd get_Xij()
+		const MatrixDd& get_Xij() // return Xij if computed, otherwise compute Xij and return it
 		{
 			if (!flag_computed_Xij) compute_Xij();
 			return Xij;
 		}
-		MatrixDd get_Yij()
+		const MatrixDd& get_Yij() // return Yij if computed, otherwise compute Yij and return it
 		{
 			if (!flag_computed_Yij) compute_Yij();
 			return Yij;
 
 		}
-		MatrixDd get_epsilonij()
+		const MatrixDd& get_epsilonij() // return epsilonij if computed, otherwise compute epsilonij and return it
 		{
-			if (!flag_computed_epsilonij) compute_epsilonij(); // note: when compute epsilonij, Xij & Yij will ALWAYS be re-calcualated, ignoring flag_computed_Xij or flag_computed_Yij;
+			if (!flag_computed_epsilonij) compute_epsilonij();
 			return epsilonij;
 		}
-		double get_D2()
+		double get_D2() // return D2 if computed, otherwise compute D2 and return it
 		{
 			if (!flag_computed_d2) compute_D2();
 			return d2;
