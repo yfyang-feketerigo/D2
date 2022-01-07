@@ -52,8 +52,8 @@ namespace D2
 		*/
 	{
 	public:
-		template<typename T>
-		T square(T x) { return x * x; }; // define x^2
+		//template<typename T>
+		//T square(T x) { return x * x; }; // define x^2
 		void _update_neighbours(); // update neighbours
 		Configuration_neighbours(const Configuration_neighbours& config); // EXTRA COSTS WARNING: _update_neighbours() & sort_neighbours_as_center_pid() could be excuted according to corresponding flag
 		Configuration_neighbours& operator=(const Configuration_neighbours& config);// EXTRA COSTS WARNING: _update_neighbours() & sort_neighbours_as_center_pid() could be excuted according to corresponding flag
