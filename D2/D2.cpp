@@ -136,7 +136,7 @@ namespace D2
 				}
 			}
 			std::string err_message = "particle id " + std::to_string(pid) + " not found!\n";
-			throw(std::exception(err_message.c_str()));
+			throw(std::runtime_error(err_message.c_str()));
 			return vec_neighbours.front();
 		}
 		else
@@ -144,12 +144,12 @@ namespace D2
 #ifdef SAFE_GET_NEIGHBOURS
 			if (pid <= 0 || pid > pvec_neighbours_sorted.size())
 			{
-				throw std::exception(("illegal pid " + std::to_string(pid) + " when get_neighbours!").c_str());
+				throw std::runtime_error(("illegal pid " + std::to_string(pid) + " when get_neighbours!").c_str());
 			}
 			size_t found_id = pvec_neighbours_sorted[pid - 1]->p_center_pa->id;
 			if (found_id != pid)
 			{
-				throw std::exception("pid not match when get neighbours through sorted method, this could due to inconsecutive pid");
+				throw std::runtime_error("pid not match when get neighbours through sorted method, this could due to inconsecutive pid");
 			}
 #endif // SAFE_GET_NEIGHBOURS
 			return *pvec_neighbours_sorted[pid - 1];

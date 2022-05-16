@@ -37,7 +37,7 @@ Input::Input(string _fname, size_t _headline)
 	{
 		totalLine = 0;
 		cerr << "open input file failed!" << endl;
-		throw std::exception("open input file failed!");
+		throw std::runtime_error("open input file failed!");
 	}
 }
 
@@ -66,7 +66,7 @@ bool Input::open_file()
 	else
 	{
 		cerr << "input file has already been opened!" << endl;
-		throw std::exception("input file has already been opened!");
+		throw std::runtime_error("input file has already been opened!");
 	}
 	return infile.is_open();
 }
@@ -86,7 +86,7 @@ void Input::close_file()
 	else
 	{
 		cerr << "input file is not opened!" << endl;
-		throw std::exception("input file is not opened!");
+		throw std::runtime_error("input file is not opened!");
 	}
 }
 
@@ -108,13 +108,13 @@ void Input::skiphead()
 		else
 		{
 			cerr << "head lines in file has already been skipped!" << endl;
-			throw std::exception("head lines in file has already been skipped!");
+			throw std::runtime_error("head lines in file has already been skipped!");
 		}
 	}
 	else
 	{
 		cerr << fname << " not open!" << endl;
-		throw std::exception((fname + " not open!").c_str());
+		throw std::runtime_error((fname + " not open!").c_str());
 	}
 }
 
@@ -165,7 +165,7 @@ size_t Input::read_line_data(char delimiter, bool skip_empty)
 						cerr << "!!!WARNING!!!: skip reading EMPTY data line " << linePointer << " at" << fname << '\n'
 							<< "this may cause SEVERE problems when using date\n";
 #else
-						throw std::exception(("trying reading EMPTY data line: " + std::to_string(linePointer) + " at file: " + fname).c_str());
+						throw std::runtime_error(("trying reading EMPTY data line: " + std::to_string(linePointer) + " at file: " + fname).c_str());
 #endif // NO_THROW_EMPTY_LINE
 						linePointer += 1;
 					}
@@ -187,7 +187,7 @@ size_t Input::read_line_data(char delimiter, bool skip_empty)
 	else
 	{
 		cerr << "input file is not open!" << endl;
-		throw std::exception("input file is not open!");
+		throw std::runtime_error("input file is not open!");
 	}
 }
 

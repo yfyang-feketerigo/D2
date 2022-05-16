@@ -81,14 +81,14 @@ namespace Configuration
 		{
 			if (str == "orthogonal") return BoxType::orthogonal;
 			else if (str == "tilt")	return BoxType::tilt;
-			else throw std::exception(("unknown box type: " + str).c_str());
+			else throw std::runtime_error(("unknown box type: " + str).c_str());
 		}
 		static PairStyle string_to_PairStyle(std::string str)
 		{
 			if (str == "single") return PairStyle::single;
 			else if (str == "pair") return PairStyle::pair;
 			else if (str == "none") return PairStyle::none;
-			else throw std::exception(("unknown pair style: " + str).c_str());
+			else throw std::runtime_error(("unknown pair style: " + str).c_str());
 		}
 
 		Configuration(std::string config_file, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single, bool _is_sorted = false);
@@ -218,7 +218,7 @@ namespace Configuration
 			if (!ofile.is_open())
 			{
 				//std::cerr << fname << " open failed" << std::endl;
-				throw std::exception((fname + " open failed").c_str());
+				throw std::runtime_error((fname + " open failed").c_str());
 			}
 			for (size_t i = 0; i < comments.size(); i++)
 			{

@@ -79,7 +79,7 @@ int main(int ac, char* av[])
 		if (vm.count("rcut"))
 			cout << "rcut: " << rcut << '\n';
 		else
-			throw exception("rcut was not set!");
+			throw runtime_error("rcut was not set!");
 
 		if (vm.count("ifname_t"))
 		{
@@ -89,7 +89,7 @@ int main(int ac, char* av[])
 			cout << "input box type at time t: " << boxtype_t << '\n';
 		}
 		else
-			throw exception("inpute file name at time t was not set.\n --help to show help");
+			throw runtime_error("inpute file name at time t was not set.\n --help to show help");
 
 		if (vm.count("ifname_t-dt"))
 		{
@@ -99,7 +99,7 @@ int main(int ac, char* av[])
 			cout << "input box type at time t-dt: " << boxtype_t_ << '\n';
 		}
 		else
-			throw exception("input file name at time t-dt was not set.\n --help to show help");
+			throw runtime_error("input file name at time t-dt was not set.\n --help to show help");
 
 		fs::path fs_offpath = fs::path(ofpath) / ofname;
 		cout << "output file: " << fs_offpath << '\n';

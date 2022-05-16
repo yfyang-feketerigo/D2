@@ -43,7 +43,7 @@ public:
 		else
 		{
 			std::cerr << "line " << linePointer << " is EMPTY" << std::endl;
-			throw std::exception("trying get empty data");
+			throw std::runtime_error("trying get empty data");
 		}
 
 	}

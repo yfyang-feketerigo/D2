@@ -148,7 +148,7 @@ namespace Configuration
 		else
 		{
 			cerr << "File " << config_file << " open failed!" << endl;
-			throw std::exception(config_file.c_str());
+			throw std::runtime_error(config_file.c_str());
 		}
 		infile.close();
 
@@ -308,7 +308,7 @@ namespace Configuration
 			}
 		}
 		std::cerr << "particle " << _id << " not found";
-		throw("particle " + std::to_string(_id) + " not found");
+		throw std::runtime_error("particle " + std::to_string(_id) + " not found");
 	}
 
 	void Configuration::sort_particle()
@@ -327,7 +327,7 @@ namespace Configuration
 	{
 #ifdef SAFE_GET_PARTICLE_SORTED
 		if (!flag_particle_sorted)
-			throw std::exception("particle not sorted when using get_particle_sorted()!!!");
+			throw std::runtime_error("particle not sorted when using get_particle_sorted()!!!");
 #endif // SAFE_GET_PARTICLE_SORTED
 		return pvec_particle_sorted;
 	}
@@ -337,11 +337,11 @@ namespace Configuration
 		//std::cout << "using sorted!" << '\n';
 #ifdef SAFE_GET_PARTICLE_SORTED
 		if (!flag_particle_sorted)
-			throw std::exception("particle not sorted when using get_particle_sorted(size_t id)!!!");
+			throw std::runtime_error("particle not sorted when using get_particle_sorted(size_t id)!!!");
 		if (id > get_particle().size() || id <= 0)
-			throw std::exception(("Searching particle id " + std::to_string(id) + " illegal\n").c_str());
+			throw std::runtime_error(("Searching particle id " + std::to_string(id) + " illegal\n").c_str());
 		if (id != pvec_particle_sorted[id - 1]->id)
-			throw std::exception(("id not match when searching particle sorted! this could due to inconsecutive id.\n"));
+			throw std::runtime_error(("id not match when searching particle sorted! this could due to inconsecutive id.\n"));
 #endif // SAFE_GET_PARTICLE_SORTED
 		return *(pvec_particle_sorted[id - 1]);
 	}
@@ -354,7 +354,7 @@ namespace Configuration
 		if (!flag_inbox)
 		{
 			cerr << "new particle coordiantion is not in box!" << endl;
-			throw std::exception("new particle coordiantion is not in box!");
+			throw std::runtime_error("new particle coordiantion is not in box!");
 		}
 		bool flag_oldtype = true;
 		for (size_t i = 0; i < vec_particle.size(); i++)
@@ -378,7 +378,7 @@ namespace Configuration
 		if (!ofile.is_open())
 		{
 			cerr << fname << " open failed" << endl;
-			throw std::exception((fname + " open failed").c_str());
+			throw std::runtime_error((fname + " open failed").c_str());
 		}
 		ofile << "LAMMPS data file via C++, Configuration class, timestep = " << timestep << '\n';
 		ofile << '\n';
@@ -440,7 +440,7 @@ namespace Configuration
 		if (!ofile.is_open())
 		{
 			//cerr << full_opath << " open failed" << endl;
-			throw std::exception((full_opath + " open failed").c_str());
+			throw std::runtime_error((full_opath + " open failed").c_str());
 		}
 
 		double lx = xhi - xlo;
@@ -488,7 +488,7 @@ namespace Configuration
 		}
 
 		cerr << "wrong dump style: " << style << '\n';
-		throw std::exception(("wrong dump style: " + style).c_str());
+		throw std::runtime_error(("wrong dump style: " + style).c_str());
 
 	}
 }
