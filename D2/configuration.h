@@ -159,26 +159,30 @@ namespace Configuration
 		* 手动修改边界
 		*/
 
-		inline double set_xboundary(double _xlo, double _xhi)
+		inline void set_xboundary(double _xlo, double _xhi)
 		{
 			xlo = _xlo;
 			xhi = _xhi;
+			return;
 		}
-		inline double set_yboundary(double _ylo, double _yhi)
+		inline void set_yboundary(double _ylo, double _yhi)
 		{
 			ylo = _ylo;
 			yhi = _yhi;
+			return;
 		}
-		inline double set_zboundary(double _zlo, double _zhi)
+		inline void set_zboundary(double _zlo, double _zhi)
 		{
 			zlo = _zlo;
 			zhi = _zhi;
+			return;
 		}
-		inline double set_tilt(double _xy, double _xz, double _yz)
+		inline void set_tilt(double _xy, double _xz, double _yz)
 		{
 			xy = _xy;
 			xz = _xz;
 			yz = _yz;
+			return;
 		}
 
 		inline unsigned long long get_timestep() const { return timestep; }
@@ -213,7 +217,7 @@ namespace Configuration
 		void to_data(std::string fname, BoxType _boxtype = BoxType::tilt);
 
 		template<typename T>
-		void para_to_dump(const std::string&& fname, const std::initializer_list<std::string>&& add_para_name, const std::initializer_list<std::vector<T>>&& add_para, const std::vector<std::string>&& comments = {}) const//注意额外参量与粒子序号的对应关系
+		void para_to_dump(const std::string& fname, const std::initializer_list<std::string>& add_para_name, const std::initializer_list<std::vector<T>>& add_para, const std::vector<std::string>& comments = std::vector<std::string>()) const//注意额外参量与粒子序号的对应关系
 		{
 			std::ofstream ofile;
 			ofile.open(fname);
