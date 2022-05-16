@@ -23,6 +23,7 @@
 #include <initializer_list>
 #include <algorithm>
 #include <map>
+#include <exception>
 //#define LOG_ON_SCREEN
 #define SAFE_GET_PARTICLE_SORTED
 namespace Configuration

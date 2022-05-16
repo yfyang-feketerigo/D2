@@ -14,6 +14,7 @@
 #include <vector>
 #include <sstream>
 #include <limits>
+#include <exception>
 //#define NO_THROW_EMPTY_LINE
 
 std::string& trim(std::string& s);

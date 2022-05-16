@@ -7,7 +7,7 @@
 #include <map>
 #include <initializer_list>
 #include <eigen3/Eigen/Dense>
-
+#include <exception>
 #define NO_STORE_NEIGHBOUR_RIJ
 #define SAFE_GET_NEIGHBOURS
 namespace D2

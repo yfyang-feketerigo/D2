@@ -9,7 +9,7 @@
 #include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
 #include <boost/filesystem.hpp>
-
+#include <exception>
 void mkdir(std::string path)
 {
 	boost::filesystem::path bpath(path);
