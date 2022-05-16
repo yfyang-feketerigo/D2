@@ -10,6 +10,7 @@
 #include <boost/timer/timer.hpp>
 #include <boost/filesystem.hpp>
 #include <exception>
+#include <stdexcept>
 void mkdir(std::string path)
 {
 	boost::filesystem::path bpath(path);

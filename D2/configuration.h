@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <map>
 #include <exception>
+#include <stdexcept>
 //#define LOG_ON_SCREEN
 #define SAFE_GET_PARTICLE_SORTED
 namespace Configuration

@@ -15,6 +15,7 @@
 #include <sstream>
 #include <limits>
 #include <exception>
+#include <stdexcept>
 //#define NO_THROW_EMPTY_LINE
 
 std::string& trim(std::string& s);
