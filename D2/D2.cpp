@@ -172,7 +172,7 @@ namespace D2
 		VectorDd paj_vector_box = to_box_coordination(paj);
 		VectorDd rij_box = pai_vector_box - paj_vector_box;
 
-		for (size_t i = 0; i < rij_box.size(); i++)
+		for (size_t i = 0; i < static_cast<size_t>(rij_box.size()); i++)
 		{
 			rij_box[i] -= round(rij_box[i]);
 		}

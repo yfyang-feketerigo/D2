@@ -442,10 +442,11 @@ namespace Configuration
 			//cerr << full_opath << " open failed" << endl;
 			throw std::runtime_error((full_opath + " open failed").c_str());
 		}
-
+		/*
 		double lx = xhi - xlo;
 		double ly = yhi - ylo;
 		double lz = zhi - zlo;
+		*/
 		if (style == "yjruan")
 		{
 			ofile << "ITEM: TIMESTEP" << '\n';
