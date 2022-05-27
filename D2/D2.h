@@ -6,7 +6,7 @@
 #include <string>
 #include <map>
 #include <initializer_list>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <exception>
 #include <stdexcept>
 #define NO_STORE_NEIGHBOUR_RIJ
