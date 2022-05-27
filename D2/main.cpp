@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <eigen3/Eigen/Dense>
 #include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
 #include <boost/filesystem.hpp>
