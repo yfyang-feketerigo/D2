@@ -53,9 +53,10 @@ namespace D2
 		*/
 	{
 	public:
-		//template<typename T>
-		//T square(T x) { return x * x; }; // define x^2
-		void _update_neighbours(); // update neighbours
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+			//template<typename T>
+			//T square(T x) { return x * x; }; // define x^2
+			void _update_neighbours(); // update neighbours
 		Configuration_neighbours(const Configuration_neighbours& config); // EXTRA COSTS WARNING: _update_neighbours() & sort_neighbours_as_center_pid() could be excuted according to corresponding flag
 		Configuration_neighbours& operator=(const Configuration_neighbours& config);// EXTRA COSTS WARNING: _update_neighbours() & sort_neighbours_as_center_pid() could be excuted according to corresponding flag
 		Configuration_neighbours(std::string config_file, double _r_cut, BoxType _boxtype = BoxType::orthogonal, PairStyle _pairstyle = PairStyle::single)
@@ -114,7 +115,8 @@ namespace D2
 	class D2 // compute D2 of given particle
 	{
 	public:
-		D2() {};
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+			D2() {};
 		D2(const D2&) = delete;
 		D2& operator=(const D2&) = delete;
 		D2(const Particle* _pa, double _rcut, const Configuration_neighbours* _config_t, const Configuration_neighbours* _config_t_)

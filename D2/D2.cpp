@@ -162,7 +162,7 @@ namespace D2
 		pa_vector_cartesian(0) = pa.rx;
 		pa_vector_cartesian(1) = pa.ry;
 		pa_vector_cartesian(2) = pa.rz;
-		auto pa_vector_box = m_vector_cartesian_to_box * pa_vector_cartesian;
+		VectorDd pa_vector_box = m_vector_cartesian_to_box * pa_vector_cartesian;
 		return pa_vector_box;
 	}
 
