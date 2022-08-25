@@ -4,6 +4,7 @@
 // 20211123 add members: lx ly lz, automaticlly computed when obj constructed
 //			add func: get_lx(), get_ly(), get_lz()
 // 20211129 规范namespace
+// 20220825 safely cast double to integer
 #include "configuration.h"
 namespace Configuration
 {
@@ -144,7 +145,7 @@ namespace Configuration
 #ifdef LOG_ON_SCREEN
 			clog << "Head information has been processed" << '\n';
 #endif // LOG_ON_SCREEN
-		}
+}
 		else
 		{
 			cerr << "File " << config_file << " open failed!" << endl;
@@ -192,14 +193,14 @@ namespace Configuration
 		for (size_t i = 0; i < particle_num; i++)
 		{
 			in_data.read_line_data();
-			vec_particle[i].id = (size_t)in_data.get_data()[0];
-			vec_particle[i].type = (int)in_data.get_data()[1];
+			vec_particle[i].id = std::lround(in_data.get_data()[0]);
+			vec_particle[i].type = std::rint(in_data.get_data()[1]);
 			vec_particle[i].rx = in_data.get_data()[2];
 			vec_particle[i].ry = in_data.get_data()[3];
 			vec_particle[i].rz = in_data.get_data()[4];
-			vec_particle[i].box_x = (int)in_data.get_data()[5];
-			vec_particle[i].box_y = (int)in_data.get_data()[6];
-			vec_particle[i].box_z = (int)in_data.get_data()[7];
+			vec_particle[i].box_x = std::rint(in_data.get_data()[5]);
+			vec_particle[i].box_y = std::rint(in_data.get_data()[6]);
+			vec_particle[i].box_z = std::rint(in_data.get_data()[7]);
 		}
 
 		in_data.skip_line(GAP_LINE); //跳过坐标与速度间空行
@@ -224,7 +225,7 @@ namespace Configuration
 		clog << '\n';
 #endif // LOG_ON_SCREEN
 		infile.close();
-	}
+		}
 
 	Configuration::Configuration(const Configuration& conf)
 	{
